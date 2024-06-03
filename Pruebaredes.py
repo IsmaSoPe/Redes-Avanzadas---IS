@@ -46,7 +46,8 @@ def display_menu():
     print("4. Añadir campus.")
     print("5. Borrar dispositivo.")
     print("6. Borrar campus.")
-    print("7. Salir")
+    print("7. Modificar IP/Máscara de un dispositivo.")
+    print("8. Salir")
     return input("Elija una opción: ")
 
 def list_campuses():
@@ -178,6 +179,44 @@ def delete_campus():
         print("Opción inválida.")
     pause()
 
+def modify_device_ip_mask():
+    clear_screen()
+    print("Modificar IP/Máscara de un dispositivo")
+    print("Elija el campus del dispositivo:")
+    list_campuses()
+    selector = int(input("Elija una opción: ")) - 1
+    c.execute("SELECT * FROM campus")
+    campuses = c.fetchall()
+    if 0 <= selector < len(campuses):
+        campus_id = campuses[selector][0]
+        c.execute("SELECT * FROM devices WHERE campus_id=?", (campus_id,))
+        devices = c.fetchall()
+        clear_screen()
+        if devices:
+            for idx, device in enumerate(devices, start=1):
+                print(f"{idx}. {device[1]}")
+            device_selector = int(input("Elija un dispositivo para modificar: ")) - 1
+            if 0 <= device_selector < len(devices):
+                device_id = devices[device_selector][0]
+                new_ip = input("Ingrese la nueva dirección IP: ")
+                try:
+                    ip = ipaddress.ip_address(new_ip)
+                except ValueError:
+                    print("Dirección IP inválida.")
+                    pause()
+                    return
+                new_mask = input("Ingrese la nueva máscara de red: ")
+                c.execute("UPDATE devices SET ip_address=?, mask=? WHERE id=?", (new_ip, new_mask, device_id))
+                conn.commit()
+                print("Dispositivo modificado correctamente.")
+            else:
+                print("Opción inválida.")
+        else:
+            print("No se encontraron dispositivos.")
+    else:
+        print("Opción inválida.")
+    pause()
+
 def main():
     if authenticate():
         while True:
@@ -195,6 +234,8 @@ def main():
             elif choice == "6":
                 delete_campus()
             elif choice == "7":
+                modify_device_ip_mask()
+            elif choice == "8":
                 sys.exit()
             else:
                 print("Opción inválida.")
