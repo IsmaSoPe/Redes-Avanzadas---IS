@@ -46,8 +46,7 @@ def display_menu():
     print("4. Añadir campus.")
     print("5. Borrar dispositivo.")
     print("6. Borrar campus.")
-    print("7. Generar reporte PDF.")
-    print("8. Salir")
+    print("7. Salir")
     return input("Elija una opción: ")
 
 def list_campuses():
@@ -179,11 +178,6 @@ def delete_campus():
         print("Opción inválida.")
     pause()
 
-def generate_pdf_report():
-    clear_screen()
-    print("Generar reporte PDF (funcionalidad aún no implementada)")
-    pause()
-
 def main():
     if authenticate():
         while True:
@@ -201,8 +195,6 @@ def main():
             elif choice == "6":
                 delete_campus()
             elif choice == "7":
-                generate_pdf_report()
-            elif choice == "8":
                 sys.exit()
             else:
                 print("Opción inválida.")
